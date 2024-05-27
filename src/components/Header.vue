@@ -27,13 +27,17 @@
 </script>
 
 <style scoped>
-
+    
     /* rgb(20, 190, 120) --> verde futurista */
 
     nav {
         background-color: rgb(40, 40, 40);
         display: flex;
         border-radius: 1.5em;
+        box-shadow: 0 4px 8px 0;
+        z-index:1;
+        position: sticky;
+        top: 0.5em;
     }
 
     ul {
