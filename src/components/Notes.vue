@@ -1,24 +1,19 @@
 <template>
-    <div class="content" v-motion-slide-visible-bottom>
+    <div class="content" v-motion-slide-visible-bottom >
         <div
             class="note" 
             v-for="(note, index) in notes"
             :key="index"
-            v-motion-slide-visible-left 
+            v-motion-slide-visible-left
+            @click="noteClick(index)" 
         >
             <h1>{{ note.title }}</h1>
-            <p>{{ note.description }}</p>
-            <div 
-                class="control-hidden"
-                @click=""
-            >
-                <button>Editar</button>
-                <button>Borrar</button>
-                <button>Mover</button>
-            </div>
+            <p>{{ 
+                note.description.length > 50 && activeNote != index ? note.description.substring(0,50) + "[...]" : note.description
+            }}</p>
+            <Coments v-if="index == activeNote" :coments="note.coments"/>            
         </div>
     </div>
-    
     <div class="add-button">
         <h1>+</h1>
     </div>
@@ -30,12 +25,18 @@
 -->
 
 <script>
-    
-    export default({
+    import Coments from './Coments.vue'
 
+    export default({
+        components: {
+            Coments
+        },
         data() {
             return {
+                component: "",
+                activeNote: -1,
                 notes: [],
+                className: "control-hidden"
             }
         },
         mounted(){
@@ -45,15 +46,14 @@
             .catch(error => console.log(error));
         },
         methods: {
-            noteClick() {
-
+            noteClick(index) {
+                this.activeNote == index ? this.activeNote = -1 : this.activeNote = index;
             }
         },
     })
 </script>
 
 <style scoped>
-
     .add-button {
         background-color: rgb(20, 190, 120);
         width: fit-content;
@@ -72,15 +72,6 @@
         border-radius: 1em;
         height: 80vh;
         overflow-y: scroll;
-    }
-
-    .control-show {
-        display: flex;
-        justify-content: center;
-    }
-
-    .control-hidden {
-        display: none;
     }
 
     button {
@@ -106,10 +97,8 @@
         box-shadow: 0 4px 10px 0 black;
     }
 
-
-
     .note:hover {
-        background-color: rgb(100, 100, 200);
+        background-color: rgb(69, 69, 69);
         transition: 0.2s;
     }
 
