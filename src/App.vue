@@ -1,5 +1,5 @@
 <template>
-    <Header class="sticky"/>
+    <Header/>
     <RouterView v-motion-slide-right />
 </template>
 
@@ -13,7 +13,3 @@
         },
     };
 </script>
-
-<style scoped>
-
-</style>

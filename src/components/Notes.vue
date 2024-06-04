@@ -4,14 +4,22 @@
             class="note" 
             v-for="(note, index) in notes"
             :key="index"
+            ref="notes"
             v-motion-slide-visible-left
-            @click="noteClick(index)" 
         >
             <h1>{{ note.title }}</h1>
             <p>{{ 
-                note.description.length > 50 && activeNote != index ? note.description.substring(0,50) + "[...]" : note.description
+                note.description.length > 200 && activeNote != index ? note.description.substring(0,200) + "[...]" : note.description
             }}</p>
-            <Coments v-if="index == activeNote" :coments="note.coments"/>            
+
+            <Coments v-if="index == activeNote" :id="note.id"/>
+
+            <div v-if="index != activeNote" class="open-btn" @click="openNote(index)">
+                <font-awesome-icon :icon="['fas', 'circle-chevron-down']" />
+            </div>
+            <div v-else class="close-btn" @click="closeNote">
+                <font-awesome-icon :icon="['fas', 'circle-xmark']" />
+            </div>
         </div>
     </div>
     <div class="add-button">
@@ -25,7 +33,7 @@
 -->
 
 <script>
-    import Coments from './Coments.vue'
+import Coments from './Coments.vue'
 
     export default({
         components: {
@@ -46,14 +54,54 @@
             .catch(error => console.log(error));
         },
         methods: {
-            noteClick(index) {
-                this.activeNote == index ? this.activeNote = -1 : this.activeNote = index;
+            openNote(index) {
+                if(this.activeNote != index){
+                    this.activeNote = index
+                }
+
+                setTimeout(() => {
+                    let element = this.$refs.notes[index]
+                    element.scrollIntoView({ behavior: "smooth" })
+                },500) 
+            },
+            closeNote(){
+                this.activeNote = -1
             }
         },
     })
 </script>
 
 <style scoped>
+    .open-btn {
+        scale: 1.5;
+        color: rgb(20, 190, 120);
+        position: absolute;
+        top: 1.5em;
+        right: 2em;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .open-btn:hover {
+        color: rgb(20, 125, 190);
+        scale: 2;
+    }
+
+    .close-btn {
+        scale: 1.5;
+        color: rgb(20, 190, 120);
+        position: absolute;
+        top: 1.5em;
+        right: 2em;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .close-btn:hover {
+        color: rgb(200, 20, 50);
+        scale: 2;
+    }
+
     .add-button {
         background-color: rgb(20, 190, 120);
         width: fit-content;
@@ -91,8 +139,9 @@
         border-radius: 4em;
         padding-top: 1em;
         padding-bottom: 1em;
+        padding-left: 0;
         margin: 1em;
-        cursor: pointer;
+        cursor: default;
         transition: 0.2s;
         box-shadow: 0 4px 10px 0 black;
     }
@@ -102,13 +151,14 @@
         transition: 0.2s;
     }
 
+    
     h1 {
-        margin-left: 2em;
-        margin-right: 2em;
+        margin-left: 1em;
+        margin-right: 1em;
     }
 
     p {
-        margin-left: 4em;
-        margin-right: 4em;
+        margin-left: 2em;
+        margin-right: 2em;
     }
 </style>
