@@ -1,7 +1,7 @@
 <template>
     <div class="coments">
         <div v-motion-slide-right class="coment" v-if="coments" v-for="(coment, index) in coments" :key="index">
-            <h3>{{ coment.user }}</h3>
+            <h3>{{ coment.author }}</h3>
             <p>{{ coment.content }}</p>
         </div>
         <div v-motion-slide-right class="coment" v-else>
@@ -22,7 +22,7 @@
         },
         mounted(){
             let  fetchData = () => {
-                fetch("http://localhost:3000/notes/" + this.id)
+                fetch("http://localhost:3000/api/note/" + this.id)
                 .then(res => res.json())
                 .then((data => this.coments = data.coments))
                 .catch(error => console.log(error));

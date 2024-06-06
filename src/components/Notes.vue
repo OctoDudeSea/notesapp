@@ -1,5 +1,6 @@
 <template>
     <div class="content" v-motion-slide-visible-bottom >
+        <!-- Generation of notes based on the 'notes' value -->
         <div
             class="note" 
             v-for="(note, index) in notes"
@@ -9,11 +10,11 @@
         >
             <h1>{{ note.title }}</h1>
             <p>{{ 
-                note.description.length > 200 && activeNote != index ? note.description.substring(0,200) + "[...]" : note.description
+                note.title.length > 200 && activeNote != index ? note.title.substring(0,200) + "[...]" : note.title
             }}</p>
-
-            <Coments v-if="index == activeNote" :id="note.id"/>
-
+            <!-- Coments component that we show when the index is the same as the active note -->
+            <Coments v-if="index == activeNote" :id="note._id"/>
+            <!-- Behavior for open and close buttons -->
             <div v-if="index != activeNote" class="open-btn" @click="openNote(index)">
                 <font-awesome-icon :icon="['fas', 'circle-chevron-down']" />
             </div>
@@ -47,8 +48,9 @@ import Coments from './Coments.vue'
                 className: "control-hidden"
             }
         },
+        //When we load the app we fetch the necesary data from a json server (pending for change to api)
         mounted(){
-            fetch("http://localhost:3000/notes")
+            fetch("http://localhost:3000/api/notes")
             .then(res => res.json())
             .then((data => this.notes = data))
             .catch(error => console.log(error));
@@ -58,7 +60,6 @@ import Coments from './Coments.vue'
                 if(this.activeNote != index){
                     this.activeNote = index
                 }
-
                 setTimeout(() => {
                     let element = this.$refs.notes[index]
                     element.scrollIntoView({ behavior: "smooth" })
