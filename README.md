@@ -5,19 +5,19 @@
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Compiles and hot-reloads the front for development
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Compiles and minifies the front for production
 ```
 npm run build
 ```
 
+### Runs the server
+
+node server.js
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
-
-### Run Json Server
-
-npx json-server --watch data/test_data.json
