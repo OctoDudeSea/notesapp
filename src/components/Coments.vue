@@ -11,18 +11,18 @@
 </template>
 
 <script> 
-    // comment structure: { "user": "test", "content": "Test comment"}
     export default {
         props: ['id'],
         data() {
             return{
+                server : process.env.VUE_APP_SERVER_URL,
                 comments: null,
                 updateComponent: null
             }
         },
         mounted(){
             let  fetchData = () => {
-                fetch("http://localhost:3000/api/note/" + this.id)
+                fetch(this.server + "/api/note/" + this.id)
                 .then(res => res.json())
                 .then((data => this.comments = data.comments))
                 .catch(error => console.log(error));

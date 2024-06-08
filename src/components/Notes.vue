@@ -42,6 +42,7 @@ import Coments from './Coments.vue'
         },
         data() {
             return {
+                server : process.env.VUE_APP_SERVER_URL,
                 component: "",
                 activeNote: -1,
                 notes: [],
@@ -50,7 +51,7 @@ import Coments from './Coments.vue'
         },
         //When we load the app we fetch the necesary data from a json server (pending for change to api)
         mounted(){
-            fetch("http://localhost:3000/api/notes")
+            fetch(this.server + "/api/notes")
             .then(res => res.json())
             .then((data => this.notes = data))
             .catch(error => console.log(error));
