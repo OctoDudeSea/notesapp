@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const NoteScheema = mongoose.Schema({
     author: {
         type: String,
+        default: 'Anonymous',
         required: true
     },
 

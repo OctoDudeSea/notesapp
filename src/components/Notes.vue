@@ -8,10 +8,17 @@
             ref="notes"
             v-motion-slide-visible-left
         >
+            <p></p>
             <h1>{{ note.title }}</h1>
             <p>{{ 
-                note.title.length > 200 && activeNote != index ? note.title.substring(0,200) + "[...]" : note.title
+                note.content.length > 200 && activeNote != index ? note.content.substring(0,200) + "[...]" : note.content
             }}</p>
+            <div class="votes">
+                <font-awesome-icon class="like-btn" :icon="['fas', 'thumbs-up']" />
+                <p><strong>0</strong></p>
+                <font-awesome-icon class="dislike-btn" :icon="['fas', 'thumbs-down']" />
+                <p>by {{ note.author }}</p>
+            </div>
             <!-- Coments component that we show when the index is the same as the active note -->
             <Coments v-if="index == activeNote" :id="note._id"/>
             <!-- Behavior for open and close buttons -->
@@ -23,7 +30,8 @@
             </div>
         </div>
     </div>
-    <div class="add-button">
+    <NewNoteModal ref="newNote"/>
+    <div class="add-button" @click="newNote">
         <h1>+</h1>
     </div>
 </template>
@@ -34,11 +42,12 @@
 -->
 
 <script>
-import Coments from './Coments.vue'
+import Coments from './Coments.vue';
+import NewNoteModal from './NewNoteModal.vue';
 
     export default({
         components: {
-            Coments
+            Coments, NewNoteModal
         },
         data() {
             return {
@@ -68,12 +77,56 @@ import Coments from './Coments.vue'
             },
             closeNote(){
                 this.activeNote = -1
+            },
+            //This method is called when the user clicks on the '+' button
+            //It opens the modal to create a new note by calling a method from the child component
+            newNote(){
+                const childCompRef = this.$refs.newNote;
+                if(childCompRef){
+                    childCompRef.openModal();
+                }
             }
         },
     })
 </script>
 
 <style scoped>
+    .votes {
+        display: flex;
+        border-radius: 2em;
+        width: fit-content;
+        height: fit-content;
+        align-items: center;
+        margin-left: 2em;
+    }
+
+    .votes p {
+        margin: 0.5em;
+        background-color: rgb(20, 190, 120);
+        border-radius: 2em;
+        padding: 0.5em;
+    }
+
+    .like-btn, .dislike-btn {
+        background-color: rgb(20, 190, 120);
+        border-radius: 2em;
+        padding: 0.5em;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .dislike-btn:hover {
+        transition: 0.2s;
+        scale: 1.2;
+        background-color: red;
+    }
+
+    .like-btn:hover {
+        transition: 0.2s;
+        scale: 1.2;
+        background-color: rgb(20, 125, 190);
+    }
+
     .open-btn {
         scale: 1.5;
         color: rgb(20, 190, 120);
@@ -114,6 +167,13 @@ import Coments from './Coments.vue'
         bottom: 1em;
         color: white;
         cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .add-button:hover {
+        scale: 1.2;
+        background-color: rgb(20, 125, 190);
+        transition: 0.2s;
     }
 
     .content {

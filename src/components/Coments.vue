@@ -7,10 +7,14 @@
         <div v-motion-slide-right class="comment" v-else>
             <h3>No comments yet. Be the first one to comment</h3>
         </div>
+        <div class="comment-form" v-motion-slide-right>
+            <input type="text">
+            <font-awesome-icon class="send-btn" :icon="['fas', 'paper-plane']" />
+        </div>
     </div>
 </template>
 
-<script> 
+<script>
     export default {
         props: ['id'],
         data() {
@@ -42,6 +46,42 @@
 </script>
 
 <style scoped>
+    .comment-form {
+        text-align: center;
+        border-radius: 2em;
+        padding: 0.5em;
+        margin-top: 1em;
+        white-space: nowrap;
+        display: flex;
+        justify-content: center;
+    }
+
+    .comment-form input {
+        width: 95%;
+        padding: 1em;
+        border-radius: 2em;
+        border: none;
+        font-size: 1em;
+    }
+
+    .send-btn {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: x-large;
+        border-radius: 100%;
+        background-color: rgb(20, 190, 120);
+        color: rgb(40, 40, 50);
+        padding: 0.5em;
+        margin-left: 0.5em;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .send-btn:hover {
+        scale: 1.1;
+        background-color: rgb(20, 125, 190);
+        transition: 0.2s;
+    }
+
     .comments {
         margin: 2em;
     }
