@@ -73,7 +73,7 @@ import NewNoteModal from './NewNoteModal.vue';
 
             this.updateComponent = setInterval(() => {
                 fetchData();
-            }, 1000);
+            }, 20000);
         },
         methods: {
             openNote(index) {
@@ -229,9 +229,6 @@ import NewNoteModal from './NewNoteModal.vue';
             width: 100%;
             margin-left: 0;
             margin-right: 0;
-        }
-        .note {
-            
         }
     }
     

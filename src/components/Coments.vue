@@ -15,51 +15,42 @@
 </template>
 
 <script setup>
+    import { onUnmounted, onMounted, ref } from 'vue';
+
+    const server = process.env.VUE_APP_SERVER_URL;
+    const props = defineProps(['id']);
     const comment = defineModel('comment');
+    const comments = ref();
+    let updateComponent = null;
 
     function sendComment(){
-        fetch(this.server + '/api/note/' + this.id, {
+        fetch(server + '/api/note/' + props.id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                comment: comment.value
+                content: comment.value
             })
         });
-
+        
+        fetchData();
         comment.value = "";
-    }
-</script>
+    };
 
-<script>
-    export default {
-        props: ['id'],
-        data() {
-            return{
-                comments: null,
-                updateComponent: null
-            }
-        },
-        mounted(){
-            let  fetchData = () => {
-                fetch(this.server + "/api/note/" + this.id)
-                .then(res => res.json())
-                .then((data => this.comments = data.comments))
-                .catch(error => console.log(error));
+    function fetchData(){
+        fetch(server + "/api/note/" + props.id)
+        .then(res => res.json())
+        .then((data => comments.value = data.comments))
+        .catch(error => console.log(error));
 
-                console.log("Fetching data")
-            }
+        console.log("Fetching data");
+        console.log(comments);
+    };
 
-            fetchData()
-
-            this.updateComponent = setInterval(fetchData, 10000)
-        },
-        unmounted() {
-            clearInterval(this.updateComponent)
-            console.log("Component unmounted")
-        }
-    }
+    onMounted(fetchData);
+    updateComponent = setInterval(fetchData, 15000);
+    onUnmounted(() => clearInterval(updateComponent));
 </script>
 
 <style scoped>
