@@ -1,16 +1,15 @@
 <template>
-        <div class="background" v-if="showModal" v-motion-slide-bottom>
-            <div class="add-note" >
-                <div class="close-btn" @click="closeModal">
-                    <font-awesome-icon :icon="['fas', 'circle-xmark']" />
-                </div>
-                <label for="">Title:</label><br/>
-                <input type="text"><br/><br>
-                <label for="">Content:</label><br/>
-                <textarea name="" id=""></textarea><br/>
-                <div class="center">
-                    <button>Post</button>
-                </div>
+        <div class="background" v-if="showModal" v-motion-slide-bottom></div>
+        <div class="add-note" v-if="showModal">
+            <div class="close-btn" @click="closeModal">
+                <font-awesome-icon :icon="['fas', 'circle-xmark']" />
+            </div>
+            <label>Title:</label><br/>
+            <input type="text" v-model="title"><br/><br>
+            <label>Content:</label><br/>
+            <textarea v-model="content"></textarea><br/>
+            <div class="center">
+                <button @click="postNote">Post</button>
             </div>
         </div>
 </template>
@@ -18,16 +17,34 @@
 <script setup>
     import { ref } from 'vue';
 
-    const showModal = ref(false);
+    const server = process.env.VUE_APP_SERVER_URL;
+    const title = defineModel('title');
+    const content = defineModel('content');
 
+    const showModal = ref(false);
     const openModal = () => {
         showModal.value = true;
     };
     //we expose the openModal function to the parent component so that it can be called from the parent component
     defineExpose({openModal});
-
     const closeModal = () => {
         showModal.value = false;
+    };
+
+    function postNote() {
+        fetch(server + '/api/notes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: title.value,
+                content: content.value,
+            })
+        })
+        title.value = "";
+        content.value = "";
+        closeModal();
     };
 </script>
 
@@ -39,9 +56,7 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        backdrop-filter: blur(5px);
     }
 
     .add-note {
@@ -72,6 +87,7 @@
         margin-top: 1em;
         border: none;
         font-size: 1em;
+        resize: none;
     }
 
     .add-note button {

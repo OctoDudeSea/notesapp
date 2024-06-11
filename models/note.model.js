@@ -24,9 +24,9 @@ const NoteScheema = mongoose.Schema({
 
     comments: [
         {
-        author: { type: String, required: true },
-        content: { type: String, required: true },
-        date: { type: Date, default: Date.now }
+            author: { type: String, required: true },
+            content: { type: String, required: true },
+            date: { type: Date, default: Date.now }
         }
     ],
 });

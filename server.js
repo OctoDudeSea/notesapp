@@ -42,6 +42,30 @@ app.post('/api/notes', async(req, res) => {
     }
 });
 
+//Create new comment
+app.post('/api/note/:id', async(req, res) => {
+    try {
+        const note = await Note.findByIdAndUpdate(req.params.id, {$push: {comments: req.body}}, {new: true});
+        res.status(200).send(note);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+//Update a note
+app.put('/api/notes/:id', async(req, res) => {
+    try {
+        const note = await Note.findByIdAndUpdate(req.params.id, req.body);
+        if (!note) {
+            return res.status(404).json({message: 'Note not found!'});
+        }
+        const updatedNote = await Note.findById(req.params.id);
+        res.status(200).json(updatedNote);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+});
+
 //Connect to the database
 mongoose.connect('mongodb+srv://octodude:robertmongodb@notesappdata.ssw6n6s.mongodb.net/?retryWrites=true&w=majority&')
 .then(() => {

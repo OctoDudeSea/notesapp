@@ -8,18 +8,35 @@
             <h3>No comments yet. Be the first one to comment</h3>
         </div>
         <div class="comment-form" v-motion-slide-right>
-            <input type="text">
-            <font-awesome-icon class="send-btn" :icon="['fas', 'paper-plane']" />
+            <input type="text" v-model="comment">
+            <font-awesome-icon @click="sendComment" class="send-btn" :icon="['fas', 'paper-plane']"/>
         </div>
     </div>
 </template>
+
+<script setup>
+    const comment = defineModel('comment');
+
+    function sendComment(){
+        fetch(this.server + '/api/note/' + this.id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                comment: comment.value
+            })
+        });
+
+        comment.value = "";
+    }
+</script>
 
 <script>
     export default {
         props: ['id'],
         data() {
             return{
-                server : process.env.VUE_APP_SERVER_URL,
                 comments: null,
                 updateComponent: null
             }

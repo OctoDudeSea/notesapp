@@ -55,15 +55,25 @@ import NewNoteModal from './NewNoteModal.vue';
                 component: "",
                 activeNote: -1,
                 notes: [],
-                className: "control-hidden"
+                updateComponent: null
             }
         },
         //When we load the app we fetch the necesary data from a json server (pending for change to api)
         mounted(){
-            fetch(this.server + "/api/notes")
-            .then(res => res.json())
-            .then((data => this.notes = data))
-            .catch(error => console.log(error));
+            let fetchData = () => {
+                fetch(this.server + "/api/notes/")
+                .then(res => res.json())
+                .then((data => this.notes = data))
+                .catch(error => console.log(error));
+
+                console.log("Fetching data")
+            }
+
+            fetchData();
+
+            this.updateComponent = setInterval(() => {
+                fetchData();
+            }, 1000);
         },
         methods: {
             openNote(index) {
@@ -213,6 +223,17 @@ import NewNoteModal from './NewNoteModal.vue';
         transition: 0.2s;
     }
 
+    @media only screen and (max-width: 550px) {
+        /* For mobile phones: */
+        .content {
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .note {
+            
+        }
+    }
     
     h1 {
         margin-left: 1em;
