@@ -15,12 +15,13 @@
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "@vueuse/motion": "^2.1.0",
     "core-js": "^3.8.3",
-    "vue": "^3.2.13",
-    "vue-router": "^4.0.3",
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "firebase": "^10.12.2",
     "mongodb": "^6.7.0",
-    "mongoose": "^8.4.1"
+    "mongoose": "^8.4.1",
+    "vue": "^3.2.13",
+    "vue-router": "^4.0.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.0",

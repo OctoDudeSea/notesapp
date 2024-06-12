@@ -20,13 +20,14 @@
     const server = process.env.VUE_APP_SERVER_URL;
     const title = defineModel('title');
     const content = defineModel('content');
-
     const showModal = ref(false);
-    const openModal = () => {
+
+    function openModal() {
         showModal.value = true;
     };
     //we expose the openModal function to the parent component so that it can be called from the parent component
     defineExpose({openModal});
+
     const closeModal = () => {
         showModal.value = false;
     };

@@ -9,27 +9,30 @@
                 >{{ link.text }}</RouterLink>
             </li>
         </ul>
-        <font-awesome-icon class="user" :icon="['fas', 'circle-user']" />
+        <font-awesome-icon @click="showUser = !showUser" class="user" :icon="['fas', 'circle-user']" />
     </nav>
+    <UserModal class="user-modal" v-if="showUser" />
 </template>
 
-<script>
-    export default{
-        data() {
-            return {
-                links: [
-                    { url: "/", text: "Home"},
+<script setup>
+import { ref } from "vue";
+    import UserModal from "../components/UserModal.vue";
+
+    const showUser = ref(false);
+    const links = [ { url: "/", text: "Home"},
                     { url: "/about", text: "About"},
-                    { url: "/contact", text: "Contact"},
-                ],
-            }
-        },
-    };
+                    { url: "/contact", text: "Contact"},];
+
 </script>
 
 <style scoped>
-    
-    /* rgb(20, 190, 120) --> verde futurista */
+
+    .user-modal {
+        position: fixed;
+        top: 0;
+        right: 1em;
+        z-index: 1;
+    }
 
     nav {
         background-color: rgb(40, 40, 40);

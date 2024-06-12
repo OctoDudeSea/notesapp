@@ -23,19 +23,20 @@
     const comments = ref();
     let updateComponent = null;
 
-    function sendComment(){
-        fetch(server + '/api/note/' + props.id, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                content: comment.value
-            })
-        });
-        
-        fetchData();
-        comment.value = "";
+    async function sendComment() {
+        if (comment.value != "" && comment.value != null && comment.value != " ") {
+            await fetch(server + '/api/note/' + props.id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    content: comment.value
+                })
+            }).then(setTimeout(fetchData(), 500)).catch(error => console.log(error));
+
+            comment.value = "";
+        }
     };
 
     function fetchData(){

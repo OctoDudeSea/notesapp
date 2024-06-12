@@ -5,19 +5,19 @@
             class="note" 
             v-for="(note, index) in notes"
             :key="index"
-            ref="notes"
+            ref="mountedNotes"
             v-motion-slide-visible-left
         >
-            <p></p>
             <h1>{{ note.title }}</h1>
             <p>{{ 
-                note.content.length > 200 && activeNote != index ? note.content.substring(0,200) + "[...]" : note.content
+                note.content > 200 && activeNote != index ? note.content.substring(0,200) + "[...]" : note.content
             }}</p>
             <div class="votes">
                 <font-awesome-icon class="like-btn" :icon="['fas', 'thumbs-up']" />
                 <p><strong>0</strong></p>
                 <font-awesome-icon class="dislike-btn" :icon="['fas', 'thumbs-down']" />
                 <p>by {{ note.author }}</p>
+                <p>{{  note.date }}</p>
             </div>
             <!-- Coments component that we show when the index is the same as the active note -->
             <Coments v-if="index == activeNote" :id="note._id"/>
@@ -31,68 +31,61 @@
         </div>
     </div>
     <NewNoteModal ref="newNote"/>
-    <div class="add-button" @click="newNote">
+    <div class="add-button" @click="openNewNote">
         <h1>+</h1>
     </div>
 </template>
 
-<script>
-import Coments from './Coments.vue';
-import NewNoteModal from './NewNoteModal.vue';
+<script setup>
+    import Coments from './Coments.vue';
+    import NewNoteModal from './NewNoteModal.vue';
+    import { ref, onMounted } from 'vue';
+    import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-    export default({
-        components: {
-            Coments, NewNoteModal
-        },
-        data() {
-            return {
-                server : process.env.VUE_APP_SERVER_URL,
-                component: "",
-                activeNote: -1,
-                notes: [],
-                updateComponent: null
-            }
-        },
-        //When we load the app we fetch the necesary data from a json server (pending for change to api)
-        mounted(){
-            let fetchData = () => {
-                fetch(this.server + "/api/notes/")
-                .then(res => res.json())
-                .then((data => this.notes = data))
-                .catch(error => console.log(error));
+    const loggedIn = ref();
+    const server = process.env.VUE_APP_SERVER_URL;
+    const notes = ref();
+    const newNote = ref();
+    const mountedNotes = ref();
+    const activeNote = ref(-1);
+    let updateComponentData = null;
 
-                console.log("Fetching data")
-            }
+    //When we load the app we fetch the necesary data from the server
+    onMounted(fetchData);
+    updateComponentData = setInterval(fetchData, 20000);
 
-            fetchData();
+    onAuthStateChanged(getAuth(), (user) => {
+        user ? loggedIn.value = true : loggedIn.value = false;
+    });
+     
+    //This function gets the data from the server and updates the 'notes' value
+    function fetchData() {
+        fetch(server + "/api/notes/")
+            .then(res => res.json())
+            .then((data => notes.value = data))
+            .catch(error => console.log(error));
 
-            this.updateComponent = setInterval(() => {
-                fetchData();
-            }, 20000);
-        },
-        methods: {
-            openNote(index) {
-                if(this.activeNote != index){
-                    this.activeNote = index
-                }
-                setTimeout(() => {
-                    let element = this.$refs.notes[index]
-                    element.scrollIntoView({ behavior: "smooth" })
-                },500) 
-            },
-            closeNote(){
-                this.activeNote = -1
-            },
-            //This method is called when the user clicks on the '+' button
-            //It opens the modal to create a new note by calling a method from the child component
-            newNote(){
-                const childCompRef = this.$refs.newNote;
-                if(childCompRef){
-                    childCompRef.openModal();
-                }
-            }
-        },
-    })
+        console.log("Fetching data");
+    };
+
+    function openNote(index) {
+        if(activeNote.value != index){
+            activeNote.value = index
+        }
+        setTimeout(() => {
+            mountedNotes.value[index].scrollIntoView({ behavior: "smooth" })
+        },500); 
+    };
+    
+    //This method is called when the user clicks on the '+' button
+    //It opens the modal to create a new note by calling a method from the child component
+    const openNewNote = () =>{
+        newNote.value.openModal();
+    };
+     
+    function closeNote() {
+        activeNote.value = -1
+    };
 </script>
 
 <style scoped>
