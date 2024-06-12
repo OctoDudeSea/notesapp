@@ -91,7 +91,7 @@
     }
 
     .comments {
-        margin: 2em;
+        margin: 1em 1em 0.5em 1em;
     }
 
     .comment {
@@ -104,5 +104,17 @@
     .comment h3, p{
         padding: 0.3em;
         margin: 0;
+    }
+
+    @media only screen and (max-width: 550px) {
+        .comment-form input {
+            height: 0.5em;
+            align-self: center;
+        }
+
+        .send-btn {
+            font-size: large;
+            align-self: center;
+        }
     }
 </style>

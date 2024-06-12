@@ -36,11 +36,6 @@
     </div>
 </template>
 
-<!--
-    This is the structure of the json:
-    {"title": "Note 1", "description": "Note 1 description sample", "id": 1}, 
--->
-
 <script>
 import Coments from './Coments.vue';
 import NewNoteModal from './NewNoteModal.vue';
@@ -211,9 +206,7 @@ import NewNoteModal from './NewNoteModal.vue';
         border-radius: 4em;
         padding-top: 1em;
         padding-bottom: 1em;
-        padding-left: 0;
         margin: 1em;
-        cursor: default;
         transition: 0.2s;
         box-shadow: 0 4px 10px 0 black;
     }
@@ -226,9 +219,15 @@ import NewNoteModal from './NewNoteModal.vue';
     @media only screen and (max-width: 550px) {
         /* For mobile phones: */
         .content {
-            width: 100%;
+            width: fit-content;
             margin-left: 0;
             margin-right: 0;
+        }
+        
+        .note {
+            margin-left: 0.3em;
+            margin-right: 0.3em;
+            font-size: smaller;
         }
     }
     

@@ -1,5 +1,5 @@
 <template>
-        <div class="background" v-if="showModal" v-motion-slide-bottom></div>
+        <div class="background" v-if="showModal"></div>
         <div class="add-note" v-if="showModal">
             <div class="close-btn" @click="closeModal">
                 <font-awesome-icon :icon="['fas', 'circle-xmark']" />

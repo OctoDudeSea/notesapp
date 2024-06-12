@@ -9,6 +9,7 @@
                 >{{ link.text }}</RouterLink>
             </li>
         </ul>
+        <font-awesome-icon class="user" :icon="['fas', 'circle-user']" />
     </nav>
 </template>
 
@@ -64,5 +65,17 @@
 
     .router-link-active{
         background-color: rgb(20, 190, 120);
+    }
+
+    .user {
+        font-size: 2.5em;
+        margin-left: auto;
+        margin-right: 1em;
+        align-self: center;
+        color: rgb(20, 190, 120);
+    }
+
+    .use p {
+        font-size: large;
     }
 </style>
