@@ -8,32 +8,46 @@
             ref="mountedNotes"
             v-motion-slide-visible-left
         >
-            <h1>{{ note.title }}</h1>
-            <p>{{ 
-                note.content > 200 && activeNote != index ? note.content.substring(0,200) + "[...]" : note.content
-            }}</p>
-            <div class="votes">
-                <font-awesome-icon class="like-btn" :icon="['fas', 'thumbs-up']" />
-                <p><strong>0</strong></p>
-                <font-awesome-icon class="dislike-btn" :icon="['fas', 'thumbs-down']" />
-                <p>by {{ note.author }}</p>
-                <p>{{  note.date }}</p>
+            <div class="tag-container">
+                <p class="tag">{{ note.author.replace(/@[^@]+$/, '') }}</p>
+                <p class="tag">{{  note.date }}</p>
+            </div class="note-data">
+            <div class="note-data">
+                <h2>{{ note.title }}</h2>
+                <p>{{ 
+                    note.content.length > 200 && activeNote != index ? note.content.substring(0,200) + "[...]" : note.content
+                }}</p>
+            </div>
+            <div v-motion-pop class="votes">
+                <div v-if="loggedIn" style="display: flex; align-items: center;">
+                    <font-awesome-icon class="like-btn" :icon="['fas', 'thumbs-up']" />
+                    <p><strong>0</strong></p>
+                    <font-awesome-icon class="dislike-btn" :icon="['fas', 'thumbs-down']" />
+                </div>
             </div>
             <!-- Coments component that we show when the index is the same as the active note -->
-            <Coments v-if="index == activeNote" :id="note._id"/>
+            <Coments v-if="index == activeNote && loggedIn" :id="note._id" :email="auth.currentUser.email"/>
             <!-- Behavior for open and close buttons -->
-            <div v-if="index != activeNote" class="open-btn" @click="openNote(index)">
-                <font-awesome-icon :icon="['fas', 'circle-chevron-down']" />
-            </div>
-            <div v-else class="close-btn" @click="closeNote">
-                <font-awesome-icon :icon="['fas', 'circle-xmark']" />
-            </div>
+             <div v-if="loggedIn">
+                 <div v-if="index != activeNote" class="open-btn" @click="openNote(index)">
+                     <font-awesome-icon :icon="['fas', 'circle-chevron-down']" />
+                 </div>
+                 <div v-else class="close-btn" @click="closeNote">
+                     <font-awesome-icon :icon="['fas', 'circle-xmark']" />
+                 </div>
+             </div>
         </div>
     </div>
-    <NewNoteModal ref="newNote"/>
-    <div class="add-button" @click="openNewNote">
-        <h1>+</h1>
+    <NewNoteModal v-if="loggedIn == true" :email="auth.currentUser.email" ref="newNote"/>
+    <div v-motion-slide-bottom>
+        <div class="add-button" @click="openNewNote" v-if="loggedIn">
+            <h1>+</h1>
+        </div>
+        <div class="message" v-else>
+            <h2>You must be signed in to post and comment notes!</h2>
+        </div>
     </div>
+    
 </template>
 
 <script setup>
@@ -44,16 +58,23 @@
 
     const loggedIn = ref();
     const server = process.env.VUE_APP_SERVER_URL;
-    const notes = ref();
+    const notes = ref([]); //This is the array that contains all the notes
     const newNote = ref();
-    const mountedNotes = ref();
+    const mountedNotes = ref(); //This is the array that contains all the notes that are mounted in the DOM
     const activeNote = ref(-1);
+    const auth = getAuth();
     let updateComponentData = null;
 
-    //When we load the app we fetch the necesary data from the server
-    onMounted(fetchData);
-    updateComponentData = setInterval(fetchData, 20000);
 
+
+    //When we load the app we fetch the necesary data from the server and we check if the user is logged in
+    onMounted(() => {
+        fetchData();
+        loggedIn.value = getAuth();
+    });
+    updateComponentData = setInterval(fetchData, 5000);
+
+    //We update the 'loggedIn' value when the user is logged in or out
     onAuthStateChanged(getAuth(), (user) => {
         user ? loggedIn.value = true : loggedIn.value = false;
     });
@@ -62,7 +83,7 @@
     function fetchData() {
         fetch(server + "/api/notes/")
             .then(res => res.json())
-            .then((data => notes.value = data))
+            .then((data => notes.value = data.reverse()))
             .catch(error => console.log(error));
 
         console.log("Fetching data");
@@ -72,6 +93,7 @@
         if(activeNote.value != index){
             activeNote.value = index
         }
+        //We scroll the note to the top of the screen
         setTimeout(() => {
             mountedNotes.value[index].scrollIntoView({ behavior: "smooth" })
         },500); 
@@ -89,6 +111,18 @@
 </script>
 
 <style scoped>
+    .message {
+        margin: auto;
+        background-color: rgb(40, 40, 50);
+        width: fit-content;
+        border-radius: 2em;
+    }
+
+    .message h2 {
+        padding: 0.5em;
+        color: white;
+    }
+
     .votes {
         display: flex;
         border-radius: 2em;
@@ -96,6 +130,7 @@
         height: fit-content;
         align-items: center;
         margin-left: 2em;
+        margin-right: 2em;
     }
 
     .votes p {
@@ -166,6 +201,8 @@
         color: white;
         cursor: pointer;
         transition: 0.2s;
+        padding-left: 2em;
+        padding-right: 2em;
     }
 
     .add-button:hover {
@@ -223,14 +260,30 @@
             font-size: smaller;
         }
     }
-    
-    h1 {
-        margin-left: 1em;
-        margin-right: 1em;
+
+    .tag {
+        background-color: rgb(20, 125, 190);
+        border-radius: 2em;
+        width: fit-content;
+        padding: 0.2em;
+        margin-left: 0.5em;
     }
 
-    p {
+    .tag-container {
+        display: flex;
         margin-left: 2em;
         margin-right: 2em;
+        align-items: center;
+        text-align: center;
+    }
+
+    .note-data h2 {
+        margin-left: 2em;
+        margin-right: 2em;
+    }
+
+    .note-data p {
+        margin-left: 3em;
+        margin-right: 3em;
     }
 </style>

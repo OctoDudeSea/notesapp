@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+    import { ref } from "vue";
     import UserModal from "../components/UserModal.vue";
 
     const showUser = ref(false);
@@ -30,6 +30,7 @@ import { ref } from "vue";
     .user-modal {
         position: fixed;
         top: 0;
+        transform: translateY(-1em);
         right: 1em;
         z-index: 1;
     }
@@ -76,8 +77,15 @@ import { ref } from "vue";
         margin-right: 1em;
         align-self: center;
         color: rgb(20, 190, 120);
+        transition: 0.2s;
     }
 
+    .user:hover {
+        cursor: pointer;
+        scale: 1.2;
+        color: rgb(100, 100, 200);
+        transition: 0.2s;
+    }
     .use p {
         font-size: large;
     }

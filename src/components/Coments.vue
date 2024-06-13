@@ -1,7 +1,7 @@
 <template>
     <div class="comments">
         <div v-motion-slide-right class="comment" v-if="comments && comments.length > 0" v-for="(comment, index) in comments" :key="index">
-            <h3>{{ comment.author }}</h3>
+            <h3>{{ comment.author.replace(/@[^@]+$/, '') }}</h3>
             <p>{{ comment.content }}</p>
         </div>
         <div v-motion-slide-right class="comment" v-else>
@@ -18,7 +18,7 @@
     import { onUnmounted, onMounted, ref } from 'vue';
 
     const server = process.env.VUE_APP_SERVER_URL;
-    const props = defineProps(['id']);
+    const props = defineProps(['id', 'email']);
     const comment = defineModel('comment');
     const comments = ref();
     let updateComponent = null;
@@ -31,9 +31,10 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    author: props.email,
                     content: comment.value
                 })
-            }).then(setTimeout(fetchData(), 500)).catch(error => console.log(error));
+            }).then(fetchData).catch(error => console.log(error));
 
             comment.value = "";
         }

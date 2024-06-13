@@ -17,6 +17,7 @@
 <script setup>
     import { ref } from 'vue';
 
+    const props = defineProps(['email']);
     const server = process.env.VUE_APP_SERVER_URL;
     const title = defineModel('title');
     const content = defineModel('content');
@@ -39,6 +40,7 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                author: props.email,
                 title: title.value,
                 content: content.value,
             })

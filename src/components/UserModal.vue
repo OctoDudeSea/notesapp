@@ -1,22 +1,21 @@
 <template>
     <div class="user-modal">
-        <div>
-            <button v-if="loggedIn" @click="handleSignOut">Sign Out</button><br><br>
-            <button @click="reg = !reg">Sign In / Register</button>
-        </div>
-        <div class="register" v-if="reg" v-motion-slide-right>
+        <button class="registerOrSignIn" v-if="!loggedIn" @click="reg = !reg">{{ reg ? "Go to Sign In" : "Go to register" }}</button>
+        <div class="register" v-if="reg && !loggedIn" v-motion-slide-right>
             <h1>Register</h1>
             <p><input type="text" placeholder="email" v-model="email"></p>
             <p><input type="password" placeholder="password" v-model="password"></p>
             <button @click="register">Register</button><br><br>
         </div>
-        <div class="signin" v-else v-motion-slide-right>
+        <div class="signin" v-else-if="!loggedIn" v-motion-slide-right>
             <h1>Sign In</h1>
             <p><input type="text" placeholder="email" v-model="email"></p>
             <p><input type="password" placeholder="password" v-model="password"></p>
             <button @click="signIn">Sign In</button><br><br>
-            <button @click="SignInWithGoogle">Sign in with google</button>
-            <p v-if="error">{{  }}</p>
+        </div>
+        <div v-else>
+            <p class="current-user" v-if="loggedIn == true">{{ auth.currentUser.email.replace(/@[^@]+$/, '') }}</p>
+            <button @click="handleSignOut">Sign Out</button><br><br>
         </div>
     </div>
 </template>
@@ -24,17 +23,18 @@
 <script setup>
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
     import { useRouter } from "vue-router";
-    import { defineModel, ref } from "vue";
+    import { defineModel, onMounted, ref } from "vue";
     const router = useRouter();
 
+    const auth = getAuth();
     const loggedIn = ref();
     const reg = ref(false);
-    const email = defineModel("email");
-    const password = defineModel("password");
-    const error = ref();
-
+    const email = defineModel('email');
+    const password = defineModel('password');
+    const errMsg = ref();
+    
     const register = () => {
-        createUserWithEmailAndPassword(getAuth(), email.value, password.value)
+        createUserWithEmailAndPassword(auth, email.value, password.value)
         .then((data) => {
             console.log("Succesfuly registered!");
             console.log(getAuth().currentUser);
@@ -46,7 +46,7 @@
     };
 
     const signIn = () => {
-        signInWithEmailAndPassword(getAuth(), email.value, password.value)
+        signInWithEmailAndPassword(auth, email.value, password.value)
         .then((data) => {
             console.log("Succesfuly signed in!");
             console.log(getAuth().currentUser);
@@ -55,21 +55,22 @@
         .catch((error) => {
             switch (error.code) {
                 case "auth/invalid-email":
-                    errMsg. value = "Invalid email";
+                    errMsg.value = "Invalid email";
                     break;
-                case "auth/user-not-found":
-                    errMsg. value = "No account with that email was found";
-                    break;
-                case "auth/wrong-password":
-                    errMsg. value = "Incorrect password";
-                    break; 
                 default:
-                    errMsg. value = "Email or password was incorrect";
+                    errMsg.value = "Email or password was incorrect";
                     break;
             }
+
+            console.log(error.message);
+            console.log(error.code);
         });
     }
     
+    onMounted(() => {
+        loggedIn.value = auth;
+    })
+
     onAuthStateChanged(getAuth(), (user) => {
         user ? loggedIn.value = true : loggedIn.value = false;
     });
@@ -85,16 +86,28 @@
 </script>
 
 <style scoped>
+
+    input {
+        border-radius: 2em;
+        padding: 0.5em;
+    }
+
     .user-modal {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        text-align: center;
         width: fit-content;
         border-radius: 2em;
         box-shadow: 0 4px 10px 0 black;
         margin: auto;
         margin-top: 5em;
         background-color: rgb(40, 40, 50);
+        color: white;
+    }
+
+    .current-user {
+        margin: 1em;
+        background-color: rgb(20, 125, 190);
+        border-radius: 2em;
+        padding: 0.2em;
     }
 
     .register {
@@ -103,5 +116,27 @@
 
     .signin {
         margin: 1em;
+    }
+
+    button {
+        font-family: 'Courier New', Courier, monospace;
+        border-radius: 1em;
+        color: white;
+        background-color: rgb(20, 190, 120);
+        border: 0;
+        padding: 0.4em;
+        margin: 0.2em;
+        cursor: pointer;
+    }
+
+    button:hover {
+        scale: 1.2;
+        background-color: rgb(20, 125, 190);
+        transition: 0.2s;
+    }
+
+    .registerOrSignIn {
+        margin-top: 1em;
+        margin-bottom: 0;
     }
 </style>
