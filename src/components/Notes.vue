@@ -1,5 +1,5 @@
 <template>
-    <div class="content" v-motion-slide-visible-bottom >
+    <div class="content" ref="content" v-motion-slide-visible-bottom >
         <!-- Generation of notes based on the 'notes' value -->
         <div
             class="note" 
@@ -60,6 +60,7 @@
     const server = process.env.VUE_APP_SERVER_URL;
     const notes = ref([]); //This is the array that contains all the notes
     const newNote = ref();
+    const content = ref();
     const mountedNotes = ref(); //This is the array that contains all the notes that are mounted in the DOM
     const activeNote = ref(-1);
     const auth = getAuth();
@@ -73,6 +74,7 @@
         loggedIn.value = getAuth();
     });
     updateComponentData = setInterval(fetchData, 5000);
+    setTimeout(() => { mountedNotes.value[mountedNotes.value.length - 1].scrollIntoView() }, 1000);
 
     //We update the 'loggedIn' value when the user is logged in or out
     onAuthStateChanged(getAuth(), (user) => {
@@ -83,7 +85,7 @@
     function fetchData() {
         fetch(server + "/api/notes/")
             .then(res => res.json())
-            .then((data => notes.value = data.reverse()))
+            .then((data => notes.value = data))
             .catch(error => console.log(error));
 
         console.log("Fetching data");
@@ -212,6 +214,8 @@
     }
 
     .content {
+        display: flex;
+        flex-direction: column-reverse;
         box-shadow: 0 4px 10px 0 black;
         margin: 1em;
         border-radius: 1em;

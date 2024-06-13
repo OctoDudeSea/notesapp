@@ -1,6 +1,6 @@
 <template>
     <div class="user-modal">
-        <button class="registerOrSignIn" v-if="!loggedIn" @click="reg = !reg">{{ reg ? "Go to Sign In" : "Go to register" }}</button>
+        <button class="registerOrSignIn" v-if="!loggedIn" @click="changeUserView">{{ reg ? "Go to Sign In" : "Go to register" }}</button>
         <div class="register" v-if="reg && !loggedIn" v-motion-slide-right>
             <h1>Register</h1>
             <p><input type="text" placeholder="email" v-model="email"></p>
@@ -17,6 +17,7 @@
             <p class="current-user" v-if="loggedIn == true">{{ auth.currentUser.email.replace(/@[^@]+$/, '') }}</p>
             <button @click="handleSignOut">Sign Out</button><br><br>
         </div>
+        <p v-motion-pop class="error" v-if="errMsg && !loggedIn">{{ errMsg }}</p>
     </div>
 </template>
 
@@ -33,6 +34,12 @@
     const password = defineModel('password');
     const errMsg = ref();
     
+    const changeUserView = () => {
+        reg.value = !reg.value;
+        email.value = "";
+        password.value = "";
+    };
+
     const register = () => {
         createUserWithEmailAndPassword(auth, email.value, password.value)
         .then((data) => {
@@ -41,8 +48,23 @@
             router.push("/");
         })
         .catch((error) => {
-            console.log(error.code);
-        })
+            switch(error. code){
+                case "auth/invalid-email":
+                    errMsg.value = "Invalid email";
+                    break;
+                case "auth/user-not-found":
+                    errMsg.value = "No account with that email was found";
+                    break;
+                case "auth/wrong-password":
+                    errMsg.value = "Incorrect password";
+                    break; 
+                default:
+                    errMsg.value = "Email or password was incorrect";
+                    break;
+            }
+
+            setTimeout(() => { errMsg.value = null }, 5000);
+        });
     };
 
     const signIn = () => {
@@ -53,17 +75,22 @@
             router.push("/");
         })
         .catch((error) => {
-            switch (error.code) {
+            switch(error. code){
                 case "auth/invalid-email":
                     errMsg.value = "Invalid email";
                     break;
+                case "auth/user-not-found":
+                    errMsg.value = "No account with that email was found";
+                    break;
+                case "auth/wrong-password":
+                    errMsg.value = "Incorrect password";
+                    break; 
                 default:
                     errMsg.value = "Email or password was incorrect";
                     break;
             }
 
-            console.log(error.message);
-            console.log(error.code);
+            setTimeout(() => { errMsg.value = null }, 5000);
         });
     }
     
@@ -86,6 +113,15 @@
 </script>
 
 <style scoped>
+
+    .error {
+        color: white;
+        background-color: red;
+        border-radius: 2em;
+        margin-left: 1em;
+        margin-right: 1em;
+        margin-top: 0;
+    }
 
     input {
         border-radius: 2em;
