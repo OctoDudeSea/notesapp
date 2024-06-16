@@ -55,7 +55,9 @@
     import NewNoteModal from './NewNoteModal.vue';
     import { ref, onMounted } from 'vue';
     import { getAuth, onAuthStateChanged } from "firebase/auth";
+    import { useRoute } from 'vue-router'
 
+    const route = useRoute()
     const loggedIn = ref();
     const server = process.env.VUE_APP_SERVER_URL;
     const notes = ref([]); //This is the array that contains all the notes
@@ -66,15 +68,18 @@
     const auth = getAuth();
     let updateComponentData = null;
 
-
-
     //When we load the app we fetch the necesary data from the server and we check if the user is logged in
     onMounted(() => {
         fetchData();
-        loggedIn.value = getAuth();
+        loggedIn.value = auth.currentUser;
+        updateComponentData = setInterval(fetchData, 5000);
+        console.log(route.path);
+        setTimeout(() => {
+            if(route.path == "/"){
+                mountedNotes.value[mountedNotes.value.length - 1].scrollIntoView({ behavior: "smooth" });
+            };
+        }, 1000);
     });
-    updateComponentData = setInterval(fetchData, 5000);
-    setTimeout(() => { mountedNotes.value[mountedNotes.value.length - 1].scrollIntoView() }, 1000);
 
     //We update the 'loggedIn' value when the user is logged in or out
     onAuthStateChanged(getAuth(), (user) => {

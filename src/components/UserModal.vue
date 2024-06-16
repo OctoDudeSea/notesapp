@@ -58,6 +58,12 @@
                 case "auth/wrong-password":
                     errMsg.value = "Incorrect password";
                     break; 
+                case "auth/email-already-in-use":
+                    errMsg.value = "Email is already in use";
+                    break;
+                case "auth/weak-password":
+                    errMsg.value = "Password is too short. It must be at least 6 characters long";
+                    break;
                 default:
                     errMsg.value = "Email or password was incorrect";
                     break;
