@@ -18,13 +18,6 @@
                     note.content.length > 200 && activeNote != index ? note.content.substring(0,200) + "[...]" : note.content
                 }}</p>
             </div>
-            <div v-motion-pop class="votes">
-                <div v-if="loggedIn" style="display: flex; align-items: center;">
-                    <font-awesome-icon class="like-btn" :icon="['fas', 'thumbs-up']" />
-                    <p><strong>0</strong></p>
-                    <font-awesome-icon class="dislike-btn" :icon="['fas', 'thumbs-down']" />
-                </div>
-            </div>
             <!-- Coments component that we show when the index is the same as the active note -->
             <Coments v-if="index == activeNote && loggedIn" :id="note._id" :email="auth.currentUser.email"/>
             <!-- Behavior for open and close buttons -->
