@@ -320,6 +320,10 @@
         .search-box {
            width: 90%;
         }
+
+        .message h2{
+            font-size: medium;
+        }
     }
 
     .tag {

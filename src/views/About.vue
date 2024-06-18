@@ -12,11 +12,11 @@
         <div class="videos-row">
             <div>
                 <h2>Vue.js Tutorial: Beginner to Front-End Developer</h2>
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/1GNsWa_EZdw?si=2183dWsavTIBz3z8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/1GNsWa_EZdw?si=2183dWsavTIBz3z8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
             <div>
                 <h2>CRUD API Tutorial – Node, Express, MongoDB</h2>
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/_7UQPve99r4?si=xKynkFToRH76b_vY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/_7UQPve99r4?si=xKynkFToRH76b_vY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
         </div>
     </div>
@@ -45,9 +45,19 @@
         margin: 2em;
     }
 
+    iframe {
+        width: 40em;
+        height: 20em;
+    }
+
     @media screen and (max-width: 670px) {
         .about-row{
             flex-direction: column;
         }
+
+        iframe {
+        width: 20em;
+        height: 10em;
+    }
     }
 </style>
